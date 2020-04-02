@@ -30,7 +30,4 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  activerecord:
-    attributes:
-      listing:
-        listing_id: "Listing ID"
+  hello: "Hello world"
