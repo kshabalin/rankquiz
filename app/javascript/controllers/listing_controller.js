@@ -136,16 +136,16 @@ export default class extends Controller {
         fetch(`/listing/fetch?url=${this.url}`)
             .then(response => this.handleErrors(response))
             .then(response => response.json())
-            .then(({listing: {id, address, name, market}}) => {
+            .then(({listing: {id, address, name, city}}) => {
                 this.listingId = id;
-                this.city = address;
+                this.city = city;
                 this.name = name;
-                this.market = market;
+                this.market = address;
 
                 this.listingIdTarget.innerHTML = id;
-                this.cityTarget.innerHTML = address;
+                this.cityTarget.innerHTML = city;
                 this.nameTarget.innerHTML = name;
-                this.marketTarget.innerHTML = market;
+                this.marketTarget.innerHTML = address;
 
                 this.enableSubmitButton();
                 this.enableSaveButton();
