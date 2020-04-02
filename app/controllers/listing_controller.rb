@@ -17,14 +17,10 @@ class ListingController < ApplicationController
     current_user.listings.create!(listing_params)
     head :ok
     rescue StandardError => e
-      render json: { error_message: error_message(e) }, status: :unprocessable_entity
+      render json: { error_message: e.message }, status: :unprocessable_entity, statusText: "status text"
   end
 
   private
-
-  def error_message(e)
-    e.message.include?("Listing has already been taken") ? "You have already added this listing to your Portfolio" : e.message
-  end
 
   def fetch_listing
     HTTP.headers(:user_agent => USER_AGENT).get(fetch_listing_url).body

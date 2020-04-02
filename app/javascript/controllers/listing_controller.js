@@ -132,6 +132,15 @@ export default class extends Controller {
     }
   }
 
+  handleJsonErrors(response) {
+    const { status } = response;
+    if (status === 200) {
+      return response;
+    } else {
+      return new Error(`${response.status} ${response.statusText}`);
+    }
+  }
+
   fetchListing(e) {
     e.preventDefault();
     this.disableSubmitButton();
@@ -165,7 +174,6 @@ export default class extends Controller {
   submitListing(e) {
     e.preventDefault();
     this.disableSaveButton();
-    let status = 0;
     fetch("/listing", {
       method: "POST",
       headers: {
@@ -185,19 +193,11 @@ export default class extends Controller {
         }
       })
     })
-      .then(response => {
-        status = response.status;
-        return response.json();
-      })
-      .then(response => {
-        if (status === 200) {
-          this.urlTarget.value = "";
-          this.displayUrlSuccess(`Listing ${this.listingId} has been added`);
-          $(".modal").modal("hide");
-        } else {
-          this.displaySaveListingError(response.error_message);
-          this.enableSaveButton();
-        }
+      .then(response => this.handleErrors(response))
+      .then(() => {
+        this.urlTarget.value = "";
+        this.displayUrlSuccess(`Listing ${this.listingId} has been added`);
+        $(".modal").modal("hide");
       })
       .catch(e => {
         this.displaySaveListingError(e.message);
