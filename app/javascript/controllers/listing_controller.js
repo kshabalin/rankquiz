@@ -25,6 +25,10 @@ export default class extends Controller {
         return this.urlTarget.value;
     }
 
+    set url(value) {
+        this.data.set("url", value)
+    }
+
     connect() {
         this.enableSubmitButton();
     }
@@ -179,6 +183,7 @@ export default class extends Controller {
             }
         ).then(response => this.handleErrors(response))
             .then(() => {
+                this.urlTarget.value = "";
                 this.displayUrlSuccess(`Listing ${this.listingId} has been added`);
                 $(".modal").modal("hide");
             }).catch((e) => {
