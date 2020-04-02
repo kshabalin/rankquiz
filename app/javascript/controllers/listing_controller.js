@@ -1,199 +1,212 @@
-import { Controller } from "stimulus"
+import { Controller } from "stimulus";
 import {
-    SUBMIT_BUTTON_TEXT,
-    SUBMIT_BUTTON_TEXT_ON_REQUEST,
-    SAVE_LISTING_BUTTON_TEXT,
-    SAVE_LISTING_BUTTON_TEXT_ON_REQUEST
-} from "./constants"
+  SUBMIT_BUTTON_TEXT,
+  SUBMIT_BUTTON_TEXT_ON_REQUEST,
+  SAVE_LISTING_BUTTON_TEXT,
+  SAVE_LISTING_BUTTON_TEXT_ON_REQUEST
+} from "./constants";
 
 export default class extends Controller {
-    static targets = [
-        "submitBtn",
-        "saveBtn",
-        "url",
-        "urlValidFeedback",
-        "urlInvalidFeedback",
-        "listingItem",
-        "saveListingFeedback",
-        "listingId",
-        "city",
-        "name",
-        "market"
-    ];
+  static targets = [
+    "submitBtn",
+    "saveBtn",
+    "url",
+    "urlValidFeedback",
+    "urlInvalidFeedback",
+    "listingItem",
+    "saveListingFeedback",
+    "listingId",
+    "city",
+    "name",
+    "market"
+  ];
 
-    get url() {
-        return this.urlTarget.value;
+  get url() {
+    return this.urlTarget.value;
+  }
+
+  set url(value) {
+    this.data.set("url", value);
+  }
+
+  connect() {
+    this.enableSubmitButton();
+  }
+
+  displayUrlError(error) {
+    this.urlTarget.classList.add("is-invalid");
+    this.urlInvalidFeedbackTarget.innerHTML = error;
+  }
+
+  displayUrlSuccess(error) {
+    this.urlTarget.classList.add("is-valid");
+    this.urlValidFeedbackTarget.innerHTML = error;
+  }
+
+  cleanUpUrlFormFeedback() {
+    this.urlTarget.classList.remove("is-invalid");
+    this.urlInvalidFeedbackTarget.innerHTML = "";
+    this.urlTarget.classList.remove("is-valid");
+    this.urlValidFeedbackTarget.innerHTML = "";
+  }
+
+  cleanUpListingModal() {
+    this.listingItemTarget.classList.remove("is-invalid");
+    this.saveListingFeedbackTarget.innerHTML = "";
+  }
+
+  displaySaveListingError(error) {
+    this.listingItemTarget.classList.add("is-invalid");
+    this.saveListingFeedbackTarget.innerHTML = error;
+  }
+
+  enableSubmitButton() {
+    this.submitBtnTarget.innerHTML = SUBMIT_BUTTON_TEXT;
+    this.submitBtnTarget.disabled = false;
+  }
+
+  disableSubmitButton() {
+    this.submitBtnTarget.innerHTML = SUBMIT_BUTTON_TEXT_ON_REQUEST;
+    this.submitBtnTarget.disabled = true;
+  }
+
+  enableSaveButton() {
+    this.saveBtnTarget.innerHTML = SAVE_LISTING_BUTTON_TEXT;
+    this.saveBtnTarget.disabled = false;
+  }
+
+  disableSaveButton() {
+    this.saveBtnTarget.innerHTML = SAVE_LISTING_BUTTON_TEXT_ON_REQUEST;
+    this.saveBtnTarget.disabled = true;
+  }
+
+  get listingId() {
+    return this.data.get("listingId");
+  }
+
+  set listingId(value) {
+    this.data.set("listingId", value);
+  }
+
+  get city() {
+    return this.data.get("city");
+  }
+
+  set city(value) {
+    this.data.set("city", value);
+  }
+
+  get name() {
+    return this.data.get("name");
+  }
+
+  set name(value) {
+    this.data.set("name", value);
+  }
+
+  get market() {
+    return this.data.get("market");
+  }
+
+  set market(value) {
+    this.data.set("market", value);
+  }
+
+  get listing() {
+    return {
+      listing_id: this.listingId,
+      city: this.city,
+      name: this.name,
+      markets: [this.market]
+    };
+  }
+
+  handleErrors(response) {
+    const { status } = response;
+    if (status >= 200 && status < 300) {
+      return response;
+    } else if (status === 404) {
+      throw new Error("Not Found");
+    } else {
+      throw new Error(`${response.status} ${response.statusText}`);
     }
+  }
 
-    set url(value) {
-        this.data.set("url", value)
-    }
+  fetchListing(e) {
+    e.preventDefault();
+    this.disableSubmitButton();
+    this.cleanUpListingModal();
+    this.cleanUpUrlFormFeedback();
+    fetch(`/listing/fetch?url=${this.url}`)
+      .then(response => this.handleErrors(response))
+      .then(response => response.json())
+      .then(({ listing: { id, address, name, city } }) => {
+        this.listingId = id;
+        this.city = city;
+        this.name = name;
+        this.market = address;
 
-    connect() {
+        this.listingIdTarget.innerHTML = id;
+        this.cityTarget.innerHTML = city;
+        this.nameTarget.innerHTML = name;
+        this.marketTarget.innerHTML = address;
+
         this.enableSubmitButton();
-    }
+        this.enableSaveButton();
 
-    displayUrlError(error) {
-        this.urlTarget.classList.add("is-invalid");
-        this.urlInvalidFeedbackTarget.innerHTML = error;
-    }
+        $(".modal").modal("show");
+      })
+      .catch(e => {
+        this.displayUrlError(e.message);
+        this.enableSubmitButton();
+      });
+  }
 
-    displayUrlSuccess(error) {
-        this.urlTarget.classList.add("is-valid");
-        this.urlValidFeedbackTarget.innerHTML = error;
-    }
-
-    cleanUpUrlFormFeedback() {
-        this.urlTarget.classList.remove("is-invalid");
-        this.urlInvalidFeedbackTarget.innerHTML = "";
-        this.urlTarget.classList.remove("is-valid");
-        this.urlValidFeedbackTarget.innerHTML = "";
-    }
-
-    cleanUpListingModal() {
-        this.listingItemTarget.classList.remove("is-invalid");
-        this.saveListingFeedbackTarget.innerHTML = "";
-    }
-
-    displaySaveListingError(error) {
-        this.listingItemTarget.classList.add("is-invalid");
-        this.saveListingFeedbackTarget.innerHTML = error;
-    }
-
-    enableSubmitButton() {
-        this.submitBtnTarget.innerHTML = SUBMIT_BUTTON_TEXT;
-        this.submitBtnTarget.disabled = false;
-    }
-
-    disableSubmitButton() {
-        this.submitBtnTarget.innerHTML = SUBMIT_BUTTON_TEXT_ON_REQUEST;
-        this.submitBtnTarget.disabled = true;
-    }
-
-    enableSaveButton() {
-        this.saveBtnTarget.innerHTML = SAVE_LISTING_BUTTON_TEXT;
-        this.saveBtnTarget.disabled = false;
-    }
-
-    disableSaveButton() {
-        this.saveBtnTarget.innerHTML = SAVE_LISTING_BUTTON_TEXT_ON_REQUEST;
-        this.saveBtnTarget.disabled = true;
-    }
-
-    get listingId() {
-        return this.data.get("listingId")
-    }
-
-    set listingId(value) {
-        this.data.set("listingId", value)
-    }
-
-    get city() {
-        return this.data.get("city")
-    }
-
-    set city(value) {
-        this.data.set("city", value)
-    }
-
-    get name() {
-        return this.data.get("name")
-    }
-
-    set name(value) {
-        this.data.set("name", value)
-    }
-
-    get market() {
-        return this.data.get("market")
-    }
-
-    set market(value) {
-        this.data.set("market", value)
-    }
-
-    get listing() {
-        return {
-            listing_id: this.listingId,
-            city: this.city,
-            name: this.name,
-            markets: [this.market]
-        }
-    }
-
-    handleErrors(response) {
-        const { status } = response;
-        if (status >= 200 && status < 300) {
-            return response;
-        } else  if (status === 404) {
-            throw new Error("Not Found");
-        } else {
-            throw new Error(`${response.status} ${response.statusText}`);
-        }
-    }
-
-    fetchListing(e) {
-        e.preventDefault();
-        this.disableSubmitButton();
-        this.cleanUpListingModal();
-        this.cleanUpUrlFormFeedback();
-        fetch(`/listing/fetch?url=${this.url}`)
-            .then(response => this.handleErrors(response))
-            .then(response => response.json())
-            .then(({listing: {id, address, name, city}}) => {
-                this.listingId = id;
-                this.city = city;
-                this.name = name;
-                this.market = address;
-
-                this.listingIdTarget.innerHTML = id;
-                this.cityTarget.innerHTML = city;
-                this.nameTarget.innerHTML = name;
-                this.marketTarget.innerHTML = address;
-
-                this.enableSubmitButton();
-                this.enableSaveButton();
-
-                $(".modal").modal("show");
-            }).catch((e) => {
-            this.displayUrlError(e.message);
-            this.enableSubmitButton();
-        });
-    }
-
-    submitListing(e) {
-        e.preventDefault();
-        this.disableSaveButton();
-        fetch("/listing", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8',
-                    "X-CSRF-Token": this.getMetaValue("csrf-token")
-                },
-                body: JSON.stringify({
-                    listing: {
-                        listing_id: this.listingId,
-                        city: this.city,
-                        title: this.name,
-                        markets: [{
-                            name: this.market
-                        }]
-                    }
-                })
+  submitListing(e) {
+    e.preventDefault();
+    this.disableSaveButton();
+    let status = 0;
+    fetch("/listing", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        "X-CSRF-Token": this.getMetaValue("csrf-token")
+      },
+      body: JSON.stringify({
+        listing: {
+          listing_id: this.listingId,
+          city: this.city,
+          title: this.name,
+          markets: [
+            {
+              name: this.market
             }
-        ).then(response => this.handleErrors(response))
-            .then(() => {
-                this.urlTarget.value = "";
-                this.displayUrlSuccess(`Listing ${this.listingId} has been added`);
-                $(".modal").modal("hide");
-            }).catch((e) => {
-                this.displaySaveListingError(e.message);
-                this.enableSaveButton();
-        });
-    }
+          ]
+        }
+      })
+    })
+      .then(response => {
+        status = response.status;
+        return response.json();
+      })
+      .then(response => {
+        if (status === 200) {
+          this.urlTarget.value = "";
+          this.displayUrlSuccess(`Listing ${this.listingId} has been added`);
+          $(".modal").modal("hide");
+        } else {
+          this.displaySaveListingError(response.error_message);
+          this.enableSaveButton();
+        }
+      })
+      .catch(e => {
+        this.displaySaveListingError(e.message);
+        this.enableSaveButton();
+      });
+  }
 
-    getMetaValue(name) {
-        const element = document.head.querySelector(`meta[name="${name}"]`);
-        return element.getAttribute("content")
-    }
+  getMetaValue(name) {
+    const element = document.head.querySelector(`meta[name="${name}"]`);
+    return element.getAttribute("content");
+  }
 }
