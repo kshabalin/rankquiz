@@ -87,13 +87,28 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    domain_name (0.5.20190701)
+      unf (>= 0.0.5, < 1.0.0)
     erubi (1.9.0)
     execjs (2.7.0)
     ffi (1.12.2)
+    ffi-compiler (1.0.1)
+      ffi (>= 1.0.0)
+      rake
     font_awesome5_rails (1.1.1)
       railties (>= 4.2)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    http (4.4.1)
+      addressable (~> 2.3)
+      http-cookie (~> 1.0)
+      http-form_data (~> 2.2)
+      http-parser (~> 1.2.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
+    http-form_data (2.3.0)
+    http-parser (1.2.1)
+      ffi-compiler (>= 1.0, < 2.0)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
     jbuilder (2.10.0)
@@ -125,6 +140,8 @@ GEM
     puma (4.3.3)
       nio4r (~> 2.0)
     rack (2.2.2)
+    rack-cors (1.1.1)
+      rack (>= 2.0.0)
     rack-proxy (0.6.5)
       rack
     rack-test (1.1.0)
@@ -198,6 +215,9 @@ GEM
     turbolinks-source (5.2.0)
     tzinfo (1.2.6)
       thread_safe (~> 0.1)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.7)
     warden (1.2.8)
       rack (>= 2.0.6)
     web-console (4.0.1)
@@ -230,10 +250,12 @@ DEPENDENCIES
   capybara (>= 2.15)
   devise
   font_awesome5_rails
+  http
   jbuilder (~> 2.7)
   listen (>= 3.0.5, < 3.2)
   pg
   puma (~> 4.1)
+  rack-cors
   rails (~> 6.0.2, >= 6.0.2.2)
   sass-rails (>= 6)
   selenium-webdriver

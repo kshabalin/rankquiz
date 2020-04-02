@@ -39,6 +39,11 @@ export default class extends Controller {
         this.urlValidFeedbackTarget.innerHTML = error;
     }
 
+    cleanUpListingModal() {
+        this.listingItemTarget.classList.remove("is-invalid");
+        this.saveListingFeedbackTarget.innerHTML = "";
+    }
+
     displaySaveListingError(error) {
         this.listingItemTarget.classList.add("is-invalid");
         this.saveListingFeedbackTarget.innerHTML = error;
@@ -116,42 +121,29 @@ export default class extends Controller {
         }
     }
 
-    fetchUrl(e) {
+    fetchListing(e) {
         e.preventDefault();
         this.disableSubmitButton();
-        fetch(this.url)
+        this.cleanUpListingModal();
+        fetch(`/listing/fetch?url=${this.url}`)
             .then(response => this.handleErrors(response))
-            .then(response => {
-                this.listingId = response.url.match(/[0-9]+($|\/?)/)[0];
-                this.fetchListing(this.listingId);
-            }).catch((e) => {
-                this.displayUrlError(e.message);
+            .then(response => response.json())
+            .then(({listing: {id, city, name, market}}) => {
+                this.listingId = id;
+                this.city = city;
+                this.name = name;
+                this.market = market;
+
+                this.listingIdTarget.innerHTML = id;
+                this.cityTarget.innerHTML = city;
+                this.nameTarget.innerHTML = name;
+                this.marketTarget.innerHTML = market;
+
                 this.enableSubmitButton();
-            });
-    }
+                this.enableSaveButton();
 
-    fetchListing(listingId) {
-        fetch(
-            `https://api.airbnb.com/v2/listings/${listingId}?_format=v1_legacy_short&client_id=d306zoyjsyarp7ifhu67rjxn52tv0t20`
-        )
-        .then(response => this.handleErrors(response))
-        .then(response => response.json())
-        .then(({listing: {id, city, name, market}}) => {
-            this.listingId = id;
-            this.city = city;
-            this.name = name;
-            this.market = market;
-
-            this.listingIdTarget.innerHTML = listingId;
-            this.cityTarget.innerHTML = city;
-            this.nameTarget.innerHTML = name;
-            this.marketTarget.innerHTML = market;
-
-            this.enableSubmitButton();
-            this.enableSaveButton();
-
-            $(".modal").modal("show");
-        }).catch((e) => {
+                $(".modal").modal("show");
+            }).catch((e) => {
             this.displayUrlError(e.message);
             this.enableSubmitButton();
         });
