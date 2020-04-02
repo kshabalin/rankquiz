@@ -39,6 +39,13 @@ export default class extends Controller {
         this.urlValidFeedbackTarget.innerHTML = error;
     }
 
+    cleanUpUrlFormFeedback() {
+        this.urlTarget.classList.remove("is-invalid");
+        this.urlInvalidFeedbackTarget.innerHTML = "";
+        this.urlTarget.classList.remove("is-valid");
+        this.urlValidFeedbackTarget.innerHTML = "";
+    }
+
     cleanUpListingModal() {
         this.listingItemTarget.classList.remove("is-invalid");
         this.saveListingFeedbackTarget.innerHTML = "";
@@ -125,6 +132,7 @@ export default class extends Controller {
         e.preventDefault();
         this.disableSubmitButton();
         this.cleanUpListingModal();
+        this.cleanUpUrlFormFeedback();
         fetch(`/listing/fetch?url=${this.url}`)
             .then(response => this.handleErrors(response))
             .then(response => response.json())
