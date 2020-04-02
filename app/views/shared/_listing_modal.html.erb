@@ -1,0 +1,26 @@
+<div class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Are you sure you want to save the following listing?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Listing details</p>
+        <ul data-target="listing.listingItem">
+          <li>Listing ID: <span data-target="listing.listingId"></span></li>
+          <li>City: <span data-target="listing.city"></span></li>
+          <li>Name: <span data-target="listing.name"></span></li>
+          <li>Market: <span data-target="listing.market"></span></li>
+        </ul>
+        <div class="invalid-feedback" data-target="listing.saveListingFeedback"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-action="listing#submitListing" data-target="listing.saveBtn">Save</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

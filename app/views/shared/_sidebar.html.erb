@@ -1,0 +1,12 @@
+<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+  <div class="sidebar-sticky">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <%= link_to '<i class="fas fa-chart-line"></i> Track Your Portfolio'.html_safe, listing_index_path, class: "nav-link #{current_class?(listing_index_path)}" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to '<i class="fas fa-user"></i> Add New Listing'.html_safe, new_listing_path, class: "nav-link #{current_class?(new_listing_path)}" %>
+      </li>
+    </ul>
+  </div>
+</nav>

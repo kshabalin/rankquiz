@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rankquiz</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body data-gr-c-s-loaded="true">
+
+  <% if current_user.present? %>
+    <%= render partial: "shared/header" %>
+    <div class="container-fluid">
+      <div class="row">
+        <%= render partial: "shared/sidebar" %>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+          <div class="container main">
+            <%= yield %>
+          </div>
+        </main>
+      </div>
+    </div>
+  <% else %>
+    <%= yield %>
+  <% end %>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+<div class="row" data-controller="listing">
+  <div class="col-12">
+    <form data-action="submit->listing#fetchUrl">
+      <div class="form-row align-items-start">
+        <div class="col-8">
+          <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Put your url here" data-target="listing.url">
+          <div class="valid-feedback" data-target="listing.urlValidFeedback"></div>
+          <div class="invalid-feedback" data-target="listing.urlInvalidFeedback"></div>
+        </div>
+        <div class="col-4">
+          <button type="submit" class="btn btn-primary mb-2" data-target="listing.submitBtn">Fetch Url</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <%= render partial: "shared/listing_modal" %>
+</div>
